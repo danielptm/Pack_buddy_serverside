@@ -5,21 +5,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
-
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.packpal.logging.LP;
+import com.packpal.model.DbHandler;
 import com.packpal.model.ProfileBean;
 
 public class CreateProfile extends HttpServlet {
@@ -38,14 +32,17 @@ public class CreateProfile extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LP l = new LP();
+		l.logInfo("in servlet");
 		Writer pw = response.getWriter();
 		response.setContentType("application/json");
 		Gson gson = new Gson();
 		InputStream is = request.getInputStream();
 		String x = convertStreamToString(is);
 		ProfileBean pfb = gson.fromJson(x, ProfileBean.class);
-		JsonObject jobj = getProfileAsJson(pfb);
-		System.out.println(jobj.toString());
+		DbHandler db = new DbHandler();
+		db.writeProfileBeanToDb(pfb.getName(), pfb.getEmail(), pfb.getPassword(), pfb.getHomeCity(), pfb.getImg());
+		ProfileBean sendBackProfileBean = db.getProfileFromDb(pfb);
+		JsonObject jobj = getProfileAsJson(sendBackProfileBean);
 		pw.write(jobj.toString());
 		pw.flush();
 		pw.close();	

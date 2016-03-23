@@ -3,22 +3,30 @@ package com.packpal.model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
 public class DbHandler {
 	
-	private final String testPath="jdbc:sqlite:/Users/daniel/desktop/ServletTest.sqlite";
+	//TODO: Make sure that the jarfiles for the sqlite db are in the right place. Otherwise there will be errors Daniel 16.18 Wed!!!!
+	
+	String c_name = "name";
+	String c_email= "email";
+	String c_home_city="home_city";
+	String c_password="password";
+	String c_profile_picture="profile_picture";
+
+	private final String testPath="jdbc:sqlite:/Users/daniel/desktop/PackPalTestRes/ServletTest2.sqlite";
 	private final String productionPath="jdbc:sqlite:/home/daniel/pack_buddy/db/ServletTest2.sqlite";
 	
-	DbHandler(){
-		
-	}
+	public DbHandler(){}
+	
 	public Connection getConnection(){
 		Connection con;
 		try{
 			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(productionPath);
+			con = DriverManager.getConnection(testPath);
 		}catch(Exception e){con=null; e.printStackTrace();}
 		return con;
 	}
@@ -50,5 +58,21 @@ public class DbHandler {
 			}
 		}
 	}
-	
+	public ProfileBean getProfileFromDb(ProfileBean pfb){
+		PreparedStatement ps;
+		ProfileBean pfbToReturn=null;
+		Connection con = getConnection();
+		String query = "SELECT * FROM PROFILES WHERE "+c_email+" = "+pfb.getEmail()+";";
+		try {
+			ps = con.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			pfbToReturn = new ProfileBean(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5
+					));
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pfbToReturn;
+	}
 }
