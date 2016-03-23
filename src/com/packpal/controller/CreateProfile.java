@@ -5,14 +5,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
+
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.packpal.logging.LP;
 import com.packpal.model.ProfileBean;
 
@@ -32,22 +38,17 @@ public class CreateProfile extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LP l = new LP();
-		l.logInfo("Servlet is being served.");
-		PrintWriter pw = response.getWriter();
+		Writer pw = response.getWriter();
+		response.setContentType("application/json");
 		Gson gson = new Gson();
-		l.logInfo("line 35");
 		InputStream is = request.getInputStream();
 		String x = convertStreamToString(is);
-		l.logInfo("line 37 is.toString(): "+x);
-		pw.write("From the servlet your android device has entered this data..... "+ x);
-//		ProfileBean pfb = gson.fromJson(is.toString(), ProfileBean.class);
-//		l.logInfo("line 39.");
-//		l.logInfo(pfb.getName()+" "+pfb.getEmail()+" "+pfb.getHomeCity()+" "+pfb.getImg());
-//		l.logInfo("COMPLETE	");
-		
-		
-
-		
+		ProfileBean pfb = gson.fromJson(x, ProfileBean.class);
+		JsonObject jobj = getProfileAsJson(pfb);
+		System.out.println(jobj.toString());
+		pw.write(jobj.toString());
+		pw.flush();
+		pw.close();	
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -56,28 +57,28 @@ public class CreateProfile extends HttpServlet {
 	}
 	
     private String convertStreamToString(InputStream is){
-    	LP l = new LP();
-    	
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuilder jsonString =  new StringBuilder();
-
-        String line=null;
-        try {
-            while((line = br.readLine())!=null){
-            	l.logInfo("Line of input stream---- "+line);
-            	
-                jsonString.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            try {
-                br.close();
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return jsonString.toString();
+    	BufferedReader r = new BufferedReader(new InputStreamReader(is));
+    	StringBuilder total = new StringBuilder();
+    	String line;
+    	try {
+			while ((line = r.readLine()) != null) {
+			    total.append(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return total.toString();
+    }
+    
+    public JsonObject getProfileAsJson(ProfileBean pfb){
+        JsonObject jobj=null;
+        jobj = new JsonObject();
+        jobj.addProperty("img", pfb.getImg() );
+        jobj.addProperty("password", pfb.getPassword());
+        jobj.addProperty("homeCity", pfb.getHomeCity());
+        jobj.addProperty("email", pfb.getEmail());
+        jobj.addProperty("name", pfb.getName());
+        return jobj;
     }
 }

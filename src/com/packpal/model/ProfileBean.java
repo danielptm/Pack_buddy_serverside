@@ -1,11 +1,15 @@
 package com.packpal.model;
 
-public class ProfileBean {
+import java.io.Serializable;
+
+import com.google.gson.annotations.SerializedName;
+
+public class ProfileBean implements Serializable {
 	String name;
     String email;
     String homeCity;
     String password;
-    byte[] img;
+    String img;
     /**
      * Takes 4 String parameters and byte[] paramter. Representind the data of a new user.
      * @param name
@@ -14,7 +18,7 @@ public class ProfileBean {
      * @param password
      * @param img
      */
-    public ProfileBean(String name, String email, String homeCity, String password, byte[] img){
+    public ProfileBean(String name, String email, String homeCity, String password, String img){
         this.name = name;
         this.email=email;
         this.homeCity=homeCity;
@@ -55,11 +59,11 @@ public class ProfileBean {
 		this.password = password;
 	}
 
-	public byte[] getImg() {
+	public String getImg() {
 		return img;
 	}
 
-	public void setImg(byte[] img) {
+	public void setImg(String img) {
 		this.img = img;
 	}
 

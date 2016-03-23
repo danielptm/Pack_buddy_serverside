@@ -18,9 +18,9 @@ public class TestCreateProfile {
 	
 	@Test
 	public void testDoPost(){
-		byte[] b = new byte[1];
+
 		
-		ProfileBean pfb = new ProfileBean("Daniel", "Seattle", "danielptm", "hi", b);
+		ProfileBean pfb = new ProfileBean("Daniel", "Seattle", "danielptm", "hi", "hi");
 		Gson gson = new Gson();
 		String x = gson.toJson(pfb);
 		ProfileBean xyz = gson.fromJson(x, ProfileBean.class);
