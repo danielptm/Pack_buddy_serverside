@@ -8,8 +8,8 @@ import java.sql.SQLException;
 
 
 public class DbHandler {
-	
-	//TODO: Make sure that the jarfiles for the sqlite db are in the right place. Otherwise there will be errors Daniel 16.18 Wed!!!!
+	String usersEmail;
+	String usersPassword;
 	
 	String c_name = "name";
 	String c_email= "email";
@@ -21,6 +21,10 @@ public class DbHandler {
 	private final String productionPath="jdbc:sqlite:/home/daniel/pack_buddy/db/ServletTest2.sqlite";
 	
 	public DbHandler(){}
+	public DbHandler(ProfileAndPassword pfab){
+		this.usersEmail=pfab.getEmail();
+		this.usersPassword = pfab.getPassword();
+	}
 	
 	public Connection getConnection(){
 		Connection con;
@@ -33,7 +37,7 @@ public class DbHandler {
 	
 	public void writeProfileBeanToDb(String name, String email, String password, String home_city, String profile_picture){
 		String insertStatement = "INSERT INTO PROFILES (name, email, home_city, password, profile_picture)"+
-									"VALUES (?, ?, ?, ?, ?)";
+									"VALUES (?, ?, ?, ?, ?);";
 		
 		Connection conToDb = getConnection();
 		if(conToDb!=null){
@@ -45,6 +49,7 @@ public class DbHandler {
 				ps.setString(4, password);
 				ps.setString(5, profile_picture);
 				ps.executeUpdate();
+				ps.close();
 
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -57,22 +62,87 @@ public class DbHandler {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Wrote item to db");
 	}
-	public ProfileBean getProfileFromDb(ProfileBean pfb){
+	// "SELECT * FROM PROFILES WHERE "+c_email+" = "+pfb.getEmail()+";";
+	public ProfileBean getProfileFromDb(String pfbEmail){
 		PreparedStatement ps;
 		ProfileBean pfbToReturn=null;
 		Connection con = getConnection();
-		String query = "SELECT * FROM PROFILES WHERE "+c_email+" = "+pfb.getEmail()+";";
+		ResultSet rs;
+		String query1 = "SELECT * FROM PROFILES WHERE email = ?;";
 		try {
-			ps = con.prepareStatement(query);
-			ResultSet rs = ps.executeQuery();
-			pfbToReturn = new ProfileBean(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5
-					));
+			ps = con.prepareStatement(query1);
+			ps.setString(1, pfbEmail);
+			rs = ps.executeQuery();
+			rs.next();
+			pfbToReturn = new ProfileBean(rs.getString(c_name), rs.getString(c_email), rs.getString(c_home_city), rs.getString(c_password), rs.getString(c_profile_picture));
+			rs.close();
+			ps.close();
 			con.close();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return pfbToReturn;
 	}
+	
+	public boolean checkIfProfileExists(String email){
+		boolean emailExists=false;
+		Connection con = getConnection();
+		String query = "SELECT email FROM PROFILES WHERE email = ?;";
+		try {
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, email);
+			ResultSet rs = ps.executeQuery();
+			emailExists = rs.next();
+			System.out.println("checkIfProfileExists...email... "+rs.getString(1));
+			rs.close();
+			ps.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return emailExists;
+	}
+	
+	public ProfileBean logUserIn(EmailAndPasswordBean epb){
+		ProfileBean pfb=null;
+		String query = "SELECT * FROM PROFILES WHERE email = ? AND password = ?;";
+		Connection con = getConnection();
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, epb.getEmail());
+			ps.setString(2, epb.getPassword());
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			pfb = new ProfileBean(rs.getString(c_name), rs.getString(c_email), rs.getString(c_home_city), rs.getString(c_password), rs.getString(c_profile_picture));
+			rs.close();
+			ps.close();
+			con.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+
+		return pfb;
+	}
+	
+	public boolean checkIfEmailAndPwordMatchRecord(EmailAndPasswordBean epb){
+		
+		boolean matches=false;
+		
+		
+		return matches;
+	}
 }
+
+
+
+
+
+
+
+
+

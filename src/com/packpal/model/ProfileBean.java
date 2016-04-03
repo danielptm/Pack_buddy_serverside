@@ -67,5 +67,4 @@ public class ProfileBean implements Serializable {
 		this.img = img;
 	}
 
-
 }
