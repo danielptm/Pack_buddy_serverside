@@ -33,7 +33,6 @@
     <servlet-name>get</servlet-name>
     <url-pattern>/getProfile</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>com.packpal.controller.LogIn</servlet-class>
@@ -42,7 +41,20 @@
     <servlet-name>login</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
-  
-  
-  
+  <servlet>
+    <servlet-name>loadProfileAndGuests</servlet-name>
+    <servlet-class>com.packpal.controller.LoadProfileAndGuests</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>loadProfileAndGuests</servlet-name>
+    <url-pattern>/loadProfileAndGuests</url-pattern>
+  </servlet-mapping>
+    <servlet>
+    	<servlet-name>CheckOut</servlet-name>
+    	<servlet-class>com.packpal.controller.CheckOut</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    	<servlet-name>CheckOut</servlet-name>
+    	<url-pattern>/CheckOut</url-pattern>
+  </servlet-mapping>
 </web-app>

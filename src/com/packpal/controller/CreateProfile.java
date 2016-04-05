@@ -46,6 +46,7 @@ public class CreateProfile extends HttpServlet {
 		Gson gson = new Gson();
 		InputStream is = request.getInputStream();
 		String x = dtc.convertStreamToString(is);
+		System.out.println(x.length());
 		is.close();
 		//System.out.println(x);
 		System.out.println("Stream converted to string....");

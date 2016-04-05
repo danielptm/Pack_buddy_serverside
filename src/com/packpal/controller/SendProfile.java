@@ -25,7 +25,7 @@ public class SendProfile extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SendProfile() {
+    SendProfile() {
         super();
         // TODO Auto-generated constructor stub
     }

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class DbHandler {
@@ -97,7 +98,6 @@ public class DbHandler {
 			ps.setString(1, email);
 			ResultSet rs = ps.executeQuery();
 			emailExists = rs.next();
-			System.out.println("checkIfProfileExists...email... "+rs.getString(1));
 			rs.close();
 			ps.close();
 			con.close();
@@ -129,12 +129,136 @@ public class DbHandler {
 		return pfb;
 	}
 	
-	public boolean checkIfEmailAndPwordMatchRecord(EmailAndPasswordBean epb){
+	public void addEmailAddressToCheckedIn(EmailAndHostel eah){
+		String query="INSERT INTO STOCKHOLM_CHECKED_IN ("+eah.getHostel()+") VALUES(?);";
+		Connection con = getConnection();
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, eah.getEmail());
+			ps.executeUpdate();
+			con.close();
+		}catch(SQLException e){}
 		
-		boolean matches=false;
+	}
+	
+	public ArrayList<String> selectCheckedIn(EmailAndHostel eah){
 		
+		int lowerLimit=eah.getPageToLoad();
+		int numOfRows = 3;
+	
 		
-		return matches;
+		ArrayList<String> al = new ArrayList<String>();
+		String query="SELECT "+eah.getHostel()+" FROM STOCKHOLM_CHECKED_IN limit ? OFFSET ?";
+		Connection con = getConnection();
+		if(checkIfHostelExists(eah)){	
+			try {
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setInt(1, numOfRows);
+				ps.setInt(2, lowerLimit);
+				ResultSet rs = ps.executeQuery();
+				while(rs.next()){
+					String email = rs.getString(1);
+					al.add(email);
+				}
+				ps.close();
+				rs.close();
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return al;
+	}
+	
+	public boolean checkIfHostelExists(EmailAndHostel eah){
+		boolean hostelExists=false;
+		String query="SELECT NAME FROM STOCKHOLM WHERE NAME = ?;";
+		Connection con = getConnection();
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, eah.getHostel());
+			ResultSet rs = ps.executeQuery();
+			hostelExists = rs.next();
+			rs.close();
+			ps.close();
+			con.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return hostelExists;
+	}
+	
+	public ArrayList<ProfileBean> selectProfileBeansOfCheckedIn(ArrayList<String> al){
+		ProfileBean pfb;
+		ArrayList<ProfileBean> alpfb = new ArrayList<ProfileBean>();
+		String query="SELECT * FROM PROFILES WHERE email = ?";
+		Connection con = getConnection();
+		ResultSet rs=null;
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			for(String a: al){
+					if(checkIfProfileExists(a)){
+						ps.setString(1, a);
+						rs = ps.executeQuery();
+						rs.next();
+						pfb = new ProfileBean(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
+						alpfb.add(pfb);
+						rs.close();
+				}
+			}
+			ps.close();
+			con.close();
+			
+		}catch(SQLException e){e.printStackTrace();}
+		return alpfb;
+	}
+	
+	
+	public void removeEmailAddressFromCheckedIn(EmailAndHostel eah){
+		
+		String query ="DELETE FROM STOCKHOLM_CHECKED_IN WHERE "+eah.getHostel()+" = ?;";
+		Connection con = getConnection();
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, eah.getEmail());
+			ps.executeUpdate();
+			ps.close();
+			con.close();
+		}catch(SQLException e){e.printStackTrace();}
+		
+	}
+	
+	/**
+	 * valid only for the cbp hostel.
+	 * @param email
+	 */
+	public void removeEmailAddressFromCheckedIn(String email){
+		String query ="DELETE FROM STOCKHOLM_CHECKED_IN WHERE CityBackpackers = ?;";
+		Connection con = getConnection();
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, email);
+			ps.executeUpdate();
+			ps.close();
+			con.close();
+		}catch(SQLException e){e.printStackTrace();}
+	}
+	
+	public boolean checkIfGuestIsInHostel(EmailAndHostel eah){
+		boolean exists=false;
+		String query="SELECT "+eah.getHostel()+" FROM STOCKHOLM_CHECKED_IN WHERE "+eah.getHostel()+" = ?;";
+		Connection con = getConnection();
+		try{
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, eah.getEmail());
+			ResultSet rs = ps.executeQuery();
+			exists = rs.next();
+			ps.close();
+			rs.close();
+			con.close();
+		}catch(SQLException e){e.printStackTrace();}
+		return exists;
 	}
 }
 

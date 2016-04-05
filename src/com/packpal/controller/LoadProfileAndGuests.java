@@ -1,13 +1,9 @@
 package com.packpal.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Properties;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,22 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.packpal.model.DataTypeConversion;
 import com.packpal.model.DbHandler;
+import com.packpal.model.EmailAndHostel;
 import com.packpal.model.ProfileBean;
 
 
-public class CheckIn extends HttpServlet {
+public class LoadProfileAndGuests extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	String testPath = "/Users/daniel/Desktop/PackPalTestRes/CheckedIn.json";
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CheckIn() {
+    public LoadProfileAndGuests() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -47,24 +40,27 @@ public class CheckIn extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ProfileBean userProfile;
 		Gson gson = new Gson();
 		DbHandler dbh = new DbHandler();
-		InputStream is = request.getInputStream();
-		response.setContentType("application/json");
 		DataTypeConversion dtc = new DataTypeConversion();
-		String email = dtc.convertStreamToString(is);
-		ProfileBean pfb = dbh.getProfileFromDb(email);
-		String jsonObj = gson.toJson(pfb, ProfileBean.class);
+		InputStream is =request.getInputStream();
+		String jsonString = dtc.convertStreamToString(is);
+		is.close();
+		EmailAndHostel eah = gson.fromJson(jsonString, EmailAndHostel.class);
+		userProfile = dbh.getProfileFromDb(eah.getEmail());
+		if( ! dbh.checkIfGuestIsInHostel(eah) ){
+			dbh.addEmailAddressToCheckedIn(eah);
+		}
+		ArrayList<String> al = dbh.selectCheckedIn(eah);
+		ArrayList<ProfileBean> alpfb = dbh.selectProfileBeansOfCheckedIn(al);
+		alpfb.add(0, userProfile);
+		String x = gson.toJson(alpfb);
+		System.out.println("Output stream: "+x);
 		Writer w = response.getWriter();
-		w.write(jsonObj);
+		w.write(x);
 		w.flush();
 		w.close();
-			
-	}
 	
+	}
 }
-
-
-
-
-
