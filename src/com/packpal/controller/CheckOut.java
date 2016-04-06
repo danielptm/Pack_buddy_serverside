@@ -15,7 +15,11 @@ import com.packpal.model.DataTypeConversion;
 import com.packpal.model.DbHandler;
 import com.packpal.model.EmailAndHostel;
 
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class CheckOut extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

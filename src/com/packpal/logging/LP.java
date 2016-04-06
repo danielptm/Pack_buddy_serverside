@@ -3,7 +3,11 @@ package com.packpal.logging;
 
 import java.io.IOException;
 import java.util.logging.*;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class LP {
 	 String testEnv = "/users/daniel/desktop/PackPalTestRes/Pack_buddy.log";
 	 String productionEnvironment="/home/daniel/pack_buddy/logs/Pack_buddy.log";

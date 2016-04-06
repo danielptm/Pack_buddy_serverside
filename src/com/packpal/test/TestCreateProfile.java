@@ -9,7 +9,11 @@ import com.google.gson.Gson;
 import com.packpal.model.DbHandler;
 import com.packpal.model.EmailAndHostel;
 import com.packpal.model.ProfileBean;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class TestCreateProfile {
 	
 	@Ignore

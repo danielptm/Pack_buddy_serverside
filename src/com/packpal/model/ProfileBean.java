@@ -3,7 +3,11 @@ package com.packpal.model;
 import java.io.Serializable;
 
 import com.google.gson.annotations.SerializedName;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class ProfileBean implements Serializable {
 	String name;
     String email;

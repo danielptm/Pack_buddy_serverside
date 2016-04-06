@@ -7,7 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class DbHandler {
 	String usersEmail;
 	String usersPassword;

@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class DataTypeConversion {
 	
     public String convertStreamToString(InputStream is){

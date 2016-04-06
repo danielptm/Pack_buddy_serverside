@@ -3,6 +3,11 @@ package com.packpal.logging;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class MyFormatter extends Formatter{
 	
 	@Override

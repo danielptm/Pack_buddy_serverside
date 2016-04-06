@@ -17,7 +17,11 @@ import com.packpal.model.DbHandler;
 import com.packpal.model.EmailAndHostel;
 import com.packpal.model.ProfileBean;
 
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class LoadProfileAndGuests extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

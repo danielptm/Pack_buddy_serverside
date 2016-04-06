@@ -24,7 +24,11 @@ import com.packpal.logging.LP;
 import com.packpal.model.DataTypeConversion;
 import com.packpal.model.DbHandler;
 import com.packpal.model.ProfileBean;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class CreateProfile extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

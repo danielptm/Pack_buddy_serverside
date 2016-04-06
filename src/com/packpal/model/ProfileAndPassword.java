@@ -1,7 +1,11 @@
 package com.packpal.model;
 
 import java.io.Serializable;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class ProfileAndPassword implements Serializable{
 
 	String email;

@@ -1,5 +1,9 @@
 package com.packpal.model;
-
+/**
+ * 
+ * @author daniel
+ *
+ */
 public class EmailAndHostel {
     String email;
     String hostel;
